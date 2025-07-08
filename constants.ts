@@ -23,6 +23,10 @@ export const ROUTES = {
   ADMIN: '/admin', // Added for clarity
   ADMIN_USERS: '/admin/users',
   ADMIN_ROLES: '/admin/roles',
+  // ISO Standards Routes
+  ISO_45001: '/iso/45001',
+  ISO_14001: '/iso/14001',
+  ISO_9001: '/iso/9001',
 };
 
 export const SIDEBAR_NAV_ITEMS: NavigationItem[] = [

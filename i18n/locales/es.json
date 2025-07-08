@@ -1,0 +1,66 @@
+{
+  "common": {
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "view": "Ver",
+    "search": "Buscar",
+    "filter": "Filtrar",
+    "loading": "Cargando...",
+    "error": "Error",
+    "success": "Éxito",
+    "warning": "Advertencia",
+    "info": "Información",
+    "yes": "Sí",
+    "no": "No",
+    "confirm": "Confirmar",
+    "back": "Volver",
+    "next": "Siguiente",
+    "previous": "Anterior",
+    "close": "Cerrar"
+  },
+  "auth": {
+    "login": "Iniciar Sesión",
+    "logout": "Cerrar Sesión",
+    "email": "Correo Electrónico",
+    "password": "Contraseña",
+    "remember": "Recordarme",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "invalidCredentials": "Credenciales inválidas",
+    "loginSuccess": "Inicio de sesión exitoso",
+    "logoutSuccess": "Sesión cerrada correctamente",
+    "sessionExpired": "Tu sesión ha expirado",
+    "unauthorized": "No tienes autorización para acceder a esta sección",
+    "welcome": "Bienvenido a Prevention & Safety",
+    "loginSubtitle": "Gestión inteligente de riesgos laborales y cumplimiento ISO"
+  },
+  "navigation": {
+    "dashboard": "Panel Principal",
+    "riskManagement": "Gestión de Riesgos",
+    "incidents": "Gestión de Incidentes",
+    "committee": "Comité Paritario",
+    "documents": "Gestión Documental",
+    "alerts": "Alertas",
+    "audits": "Auditorías e Inspecciones",
+    "training": "Capacitaciones",
+    "compliance": "Cumplimiento ISO",
+    "reports": "Reportes",
+    "settings": "Configuración"
+  },
+  "roles": {
+    "Gerencia": "Gerencia",
+    "RRHH": "Recursos Humanos",
+    "Prevencion": "Prevención de Riesgos",
+    "Comite": "Comité Paritario",
+    "Operaciones": "Operaciones",
+    "Public": "Público"
+  },
+  "dashboard": {
+    "welcome": "Bienvenido al Panel de Control",
+    "quickActions": "Acciones Rápidas",
+    "recentActivity": "Actividad Reciente",
+    "alerts": "Alertas Pendientes",
+    "statistics": "Estadísticas Clave"
+  }
+}

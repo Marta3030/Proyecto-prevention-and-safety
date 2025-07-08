@@ -7,8 +7,13 @@ export const useAuth = () => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const isLoading = useAuthStore((state) => state.isLoading);
   const error = useAuthStore((state) => state.error);
+  const tokens = useAuthStore((state) => state.tokens);
   const login = useAuthStore((state) => state.login);
   const logout = useAuthStore((state) => state.logout);
+  const refreshToken = useAuthStore((state) => state.refreshToken);
+  const clearError = useAuthStore((state) => state.clearError);
+  const setCurrentUser = useAuthStore((state) => state.setCurrentUser);
+  const setTokens = useAuthStore((state) => state.setTokens);
 
   const hasRole = (roles: UserRole[]): boolean => {
     if (!user) return false;
@@ -20,8 +25,13 @@ export const useAuth = () => {
     isAuthenticated,
     isLoading,
     error,
+    tokens,
     login,
     logout,
+    refreshToken,
+    clearError,
+    setCurrentUser,
+    setTokens,
     userRole: user?.role,
     hasRole,
   };
