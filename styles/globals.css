@@ -1,0 +1,55 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-pns-bg-light dark:bg-pns-bg-dark text-pns-gray-900 dark:text-pns-gray-50;
+    font-family: 'Inter', sans-serif;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer components {
+  /* Button variants */
+  .btn-primary {
+    @apply bg-pns-blue hover:bg-pns-blue-dark text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-pns-blue focus:ring-offset-2;
+  }
+  
+  .btn-secondary {
+    @apply bg-pns-gray-200 hover:bg-pns-gray-300 dark:bg-pns-gray-700 dark:hover:bg-pns-gray-600 text-pns-gray-900 dark:text-pns-gray-100 font-medium py-2 px-4 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-pns-gray-400 focus:ring-offset-2;
+  }
+  
+  .btn-danger {
+    @apply bg-status-error hover:bg-red-600 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-status-error focus:ring-offset-2;
+  }
+
+  /* Card styles */
+  .card {
+    @apply bg-white dark:bg-pns-gray-800 rounded-xl shadow-lg border border-pns-gray-200 dark:border-pns-gray-700;
+  }
+
+  /* Input styles */
+  .input-field {
+    @apply w-full px-3 py-2 border border-pns-gray-300 dark:border-pns-gray-600 rounded-lg focus:ring-2 focus:ring-pns-blue focus:border-transparent dark:bg-pns-gray-700 dark:text-white;
+  }
+
+  /* Loading spinner */
+  .loading-spinner {
+    @apply animate-spin rounded-full border-t-4 border-b-4 border-pns-blue dark:border-pns-orange;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
