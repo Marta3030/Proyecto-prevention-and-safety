@@ -119,8 +119,15 @@ export class AuthService {
     return token !== null && !TokenManager.isTokenExpired(token);
   }
 
-  // Mock login for development (until backend is ready)
+  // Use real API or mock based on environment
   static async mockLogin(credentials: LoginCredentials): Promise<ApiResponse<AuthResponse>> {
+    // Check if we should use mock
+    const useMock = import.meta.env.VITE_ENABLE_MOCK_AUTH === 'true';
+    
+    if (!useMock) {
+      // Use real API
+      return this.login(credentials);
+    }
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 1000));
 

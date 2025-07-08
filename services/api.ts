@@ -2,7 +2,7 @@ import axios, { AxiosInstance, AxiosError, InternalAxiosRequestConfig } from 'ax
 import { ApiResponse, ApiError, AuthTokens } from '../types';
 
 // Use environment variable or fallback to localhost
-const API_BASE_URL = (globalThis as any).import?.meta?.env?.VITE_API_URL || 'http://localhost:3000/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
 
 // Create axios instance
 const api: AxiosInstance = axios.create({

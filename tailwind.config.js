@@ -11,10 +11,14 @@ export default {
       colors: {
         // Prevention & Safety Brand Colors
         'pns': {
+          'primary': '#f97316', // Orange-500
+          'primary-dark': '#ea580c', // Orange-600
+          'secondary': '#fbbf24', // Yellow-400
+          'secondary-dark': '#f59e0b', // Yellow-500
           'blue': '#2563eb',
           'blue-dark': '#1d4ed8',
-          'orange': '#ea580c',
-          'orange-dark': '#c2410c',
+          'orange': '#f97316',
+          'orange-dark': '#ea580c',
           'gray': {
             50: '#f8fafc',
             100: '#f1f5f9',
