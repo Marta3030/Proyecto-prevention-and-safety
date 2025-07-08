@@ -19,7 +19,10 @@ import {
   Eye,
   TreePine,
   Recycle,
-  HardHat
+  HardHat,
+  Star,
+  Target,
+  Gauge
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import useUIStore from '../../store/uiStore';
@@ -178,6 +181,35 @@ const navigationStructure = [
     path: '/compliance',
     icon: Award,
     roles: [UserRole.ADMIN, UserRole.GERENCIA, UserRole.PREVENCION]
+  },
+  {
+    id: 'iso-standards',
+    title: 'Estándares ISO',
+    icon: Award,
+    roles: [UserRole.ADMIN, UserRole.GERENCIA, UserRole.PREVENCION, UserRole.OPERACIONES],
+    children: [
+      {
+        id: 'iso-45001',
+        title: 'ISO 45001 - SST',
+        path: '/iso/45001',
+        icon: Shield,
+        roles: [UserRole.ADMIN, UserRole.GERENCIA, UserRole.PREVENCION]
+      },
+      {
+        id: 'iso-14001',
+        title: 'ISO 14001 - Ambiental',
+        path: '/iso/14001',
+        icon: Leaf,
+        roles: [UserRole.ADMIN, UserRole.GERENCIA, UserRole.PREVENCION, UserRole.OPERACIONES]
+      },
+      {
+        id: 'iso-9001',
+        title: 'ISO 9001 - Calidad',
+        path: '/iso/9001',
+        icon: Star,
+        roles: [UserRole.ADMIN, UserRole.GERENCIA, UserRole.PREVENCION, UserRole.OPERACIONES]
+      }
+    ]
   },
   {
     id: 'reports',

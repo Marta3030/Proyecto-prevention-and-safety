@@ -21,6 +21,10 @@ const CompliancePage = lazy(() => import('./pages/CompliancePage'));
 const ReportsPage = lazy(() => import('./pages/ReportsPage'));
 const SettingsPage = lazy(() => import('./pages/SettingsPage'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
+// ISO Standards Pages
+const ISO45001Page = lazy(() => import('./pages/iso/ISO45001Page'));
+const ISO14001Page = lazy(() => import('./pages/iso/ISO14001Page'));
+const ISO9001Page = lazy(() => import('./pages/iso/ISO9001Page'));
 
 const LoadingFallback: React.FC = () => (
   <div className="flex items-center justify-center h-screen w-screen bg-pns-bg-light dark:bg-pns-bg-dark">
@@ -122,6 +126,31 @@ const App: React.FC = () => {
                 } 
               />
               <Route path={ROUTES.SETTINGS} element={<SettingsPage />} />
+              {/* ISO Standards Routes */}
+              <Route 
+                path={ROUTES.ISO_45001} 
+                element={
+                  <ProtectedRoute allowedRoles={[UserRole.GERENCIA, UserRole.PREVENCION]}>
+                    <ISO45001Page />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path={ROUTES.ISO_14001} 
+                element={
+                  <ProtectedRoute allowedRoles={[UserRole.GERENCIA, UserRole.PREVENCION, UserRole.OPERACIONES]}>
+                    <ISO14001Page />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path={ROUTES.ISO_9001} 
+                element={
+                  <ProtectedRoute allowedRoles={[UserRole.GERENCIA, UserRole.PREVENCION, UserRole.OPERACIONES]}>
+                    <ISO9001Page />
+                  </ProtectedRoute>
+                } 
+              />
               {/* Add more protected routes here */}
             </Route>
           </Route>
