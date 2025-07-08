@@ -1,108 +1,159 @@
 
-import React, { useState, useEffect, useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import Logo from '../ui/Logo';
-import useUIStore from '../../store/uiStore';
+import React, { useState } from 'react';
+import { 
+  Bell, 
+  Settings, 
+  LogOut, 
+  Moon, 
+  Sun, 
+  Globe,
+  Zap,
+  ChevronDown,
+  User
+} from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
-import { SunIcon, MoonIcon, Bars3Icon, UserCircleIcon, CogIcon, ArrowUpIcon, BellAlertIcon } from '../icons/Icons'; // Assuming ArrowUpIcon for logout
-import Button from '../ui/Button';
-import { APP_NAME } from '../../constants';
-
+import useUIStore from '../../store/uiStore';
+import { useTranslation } from 'react-i18next';
+import Logo from '../ui/Logo';
+import AutomationModal from '../ui/AutomationModal';
 
 const Header: React.FC = () => {
-  const { darkMode, toggleDarkMode, toggleSidebar } = useUIStore();
-  const { user, logout, isAuthenticated } = useAuth();
-  const navigate = useNavigate();
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const { user, logout } = useAuth();
+  const { darkMode, toggleDarkMode, language, setLanguage } = useUIStore();
+  const { t, i18n } = useTranslation();
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  const [showAutomationModal, setShowAutomationModal] = useState(false);
 
-  const handleLogout = () => {
-    logout();
-    setDropdownOpen(false);
-    navigate('/login');
+  const handleLanguageChange = (newLanguage: 'es' | 'en') => {
+    setLanguage(newLanguage);
+    i18n.changeLanguage(newLanguage);
   };
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setDropdownOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  const handleLogout = async () => {
+    await logout();
+    setShowUserMenu(false);
+  };
 
   return (
-    <header className="sticky top-0 z-40 w-full bg-pns-nav-bg-light dark:bg-pns-nav-bg-dark border-b border-pns-border-light dark:border-pns-border-dark shadow-sm">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          <div className="flex items-center">
-            <Button variant="ghost" size="icon" className="md:hidden mr-2 text-pns-text-dark dark:text-pns-text-light" onClick={toggleSidebar}>
-              <Bars3Icon className="h-6 w-6" />
-            </Button>
-            <Logo />
-          </div>
+    <>
+      <header className="bg-white dark:bg-pns-gray-800 shadow-sm border-b border-pns-gray-200 dark:border-pns-gray-700">
+        <div className="px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            {/* Logo y Título */}
+            <div className="flex items-center space-x-4">
+              <Logo size="sm" showText={false} />
+              <div className="hidden sm:block">
+                <h1 className="text-xl font-bold text-pns-orange">PREVENTION</h1>
+                <p className="text-xs text-pns-gray-500 dark:text-pns-gray-400 leading-none">
+                  AND SAFETY
+                </p>
+              </div>
+            </div>
 
-          <div className="flex items-center space-x-3 sm:space-x-4">
-            <Button variant="ghost" size="icon" onClick={toggleDarkMode} aria-label="Toggle dark mode" className="text-pns-text-dark dark:text-pns-text-light">
-              {darkMode ? <SunIcon className="h-5 w-5" /> : <MoonIcon className="h-5 w-5" />}
-            </Button>
+            {/* Centro - Botón de Automatización */}
+            <div className="flex-1 flex justify-center">
+              <button
+                onClick={() => setShowAutomationModal(true)}
+                className="flex items-center space-x-2 bg-gradient-to-r from-pns-orange to-pns-primary hover:from-pns-orange-dark hover:to-pns-primary-dark text-white px-4 py-2 rounded-lg shadow-lg transform hover:scale-105 transition-all duration-200"
+              >
+                <Zap className="h-5 w-5" />
+                <span className="font-medium text-sm">Servicios de Automatización</span>
+                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+              </button>
+            </div>
 
-            {isAuthenticated && user && (
-              <>
-                <Button variant="ghost" size="icon" className="relative text-pns-text-dark dark:text-pns-text-light" aria-label="Notifications">
-                   <BellAlertIcon className="h-5 w-5" />
-                   <span className="absolute top-0 right-0 block h-2 w-2 rounded-full ring-2 ring-pns-nav-bg-light dark:ring-pns-nav-bg-dark bg-red-500" />
-                </Button>
-                <div className="relative" ref={dropdownRef}>
-                  <button
-                    onClick={() => setDropdownOpen(!dropdownOpen)}
-                    className="flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pns-blue dark:focus:ring-pns-orange"
-                    aria-expanded={dropdownOpen}
-                    aria-haspopup="true"
-                  >
-                    <span className="sr-only">Open user menu</span>
-                    {user.avatarUrl ? (
-                      <img className="h-8 w-8 rounded-full" src={user.avatarUrl} alt={user.name} />
-                    ) : (
-                      <UserCircleIcon className="h-8 w-8 text-pns-gray-400 dark:text-pns-gray-500" />
-                    )}
-                  </button>
-                  {dropdownOpen && (
-                    <div className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-pns-card-bg-light dark:bg-pns-card-bg-dark ring-1 ring-pns-border-light dark:ring-pns-border-dark focus:outline-none">
-                      <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button">
-                        <div className="px-4 py-3 border-b border-pns-border-light dark:border-pns-border-dark">
-                          <p className="text-sm font-medium text-pns-text-dark dark:text-pns-text-light truncate">{user.name}</p>
-                          <p className="text-xs text-pns-gray-500 dark:text-pns-gray-400 truncate">{user.email}</p>
-                          <p className="text-xs mt-1 px-2 py-0.5 inline-block bg-pns-blue-light dark:bg-pns-blue-dark text-pns-blue-dark dark:text-pns-blue-light rounded-full">{user.role}</p>
-                        </div>
-                        <Link
-                          to="/settings"
-                          className="flex items-center px-4 py-2 text-sm text-pns-text-dark dark:text-pns-text-light hover:bg-pns-gray-100 dark:hover:bg-pns-gray-800 w-full text-left"
-                          role="menuitem"
-                          onClick={() => setDropdownOpen(false)}
-                        >
-                          <CogIcon className="mr-3 h-5 w-5 text-pns-gray-400 dark:text-pns-gray-500" />
-                          Configuración
-                        </Link>
+            {/* Derecha - Controles */}
+            <div className="flex items-center space-x-4">
+              {/* Selector de idioma */}
+              <div className="relative">
+                <button
+                  onClick={() => handleLanguageChange(language === 'es' ? 'en' : 'es')}
+                  className="flex items-center space-x-1 p-2 text-pns-gray-600 dark:text-pns-gray-300 hover:text-pns-orange dark:hover:text-pns-orange transition-colors"
+                  title={language === 'es' ? 'Switch to English' : 'Cambiar a Español'}
+                >
+                  <Globe className="h-5 w-5" />
+                  <span className="text-sm font-medium uppercase">{language}</span>
+                </button>
+              </div>
+
+              {/* Toggle tema */}
+              <button
+                onClick={toggleDarkMode}
+                className="p-2 text-pns-gray-600 dark:text-pns-gray-300 hover:text-pns-orange dark:hover:text-pns-orange transition-colors"
+                title={darkMode ? 'Modo claro' : 'Modo oscuro'}
+              >
+                {darkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+              </button>
+
+              {/* Notificaciones */}
+              <button className="relative p-2 text-pns-gray-600 dark:text-pns-gray-300 hover:text-pns-orange dark:hover:text-pns-orange transition-colors">
+                <Bell className="h-5 w-5" />
+                <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+              </button>
+
+              {/* Menú de usuario */}
+              <div className="relative">
+                <button
+                  onClick={() => setShowUserMenu(!showUserMenu)}
+                  className="flex items-center space-x-2 p-2 rounded-lg hover:bg-pns-gray-100 dark:hover:bg-pns-gray-700 transition-colors"
+                >
+                  <div className="w-8 h-8 bg-pns-orange rounded-full flex items-center justify-center">
+                    <User className="h-5 w-5 text-white" />
+                  </div>
+                  <div className="hidden sm:block text-left">
+                    <div className="text-sm font-medium text-pns-gray-900 dark:text-white">
+                      {user?.name}
+                    </div>
+                    <div className="text-xs text-pns-gray-500 dark:text-pns-gray-400">
+                      {user?.role}
+                    </div>
+                  </div>
+                  <ChevronDown className="h-4 w-4 text-pns-gray-500" />
+                </button>
+
+                {/* Dropdown del usuario */}
+                {showUserMenu && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-pns-gray-800 rounded-lg shadow-lg border border-pns-gray-200 dark:border-pns-gray-700 z-50">
+                    <div className="py-1">
+                      <div className="px-4 py-2 text-sm text-pns-gray-700 dark:text-pns-gray-300 border-b border-pns-gray-200 dark:border-pns-gray-700">
+                        <div className="font-medium">{user?.name}</div>
+                        <div className="text-xs text-pns-gray-500">{user?.email}</div>
+                      </div>
+                      
+                      <button className="flex items-center w-full px-4 py-2 text-sm text-pns-gray-700 dark:text-pns-gray-300 hover:bg-pns-gray-100 dark:hover:bg-pns-gray-700">
+                        <User className="h-4 w-4 mr-3" />
+                        Mi Perfil
+                      </button>
+                      
+                      <button className="flex items-center w-full px-4 py-2 text-sm text-pns-gray-700 dark:text-pns-gray-300 hover:bg-pns-gray-100 dark:hover:bg-pns-gray-700">
+                        <Settings className="h-4 w-4 mr-3" />
+                        Configuración
+                      </button>
+                      
+                      <div className="border-t border-pns-gray-200 dark:border-pns-gray-700">
                         <button
                           onClick={handleLogout}
-                          className="flex items-center w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-pns-gray-100 dark:hover:bg-pns-gray-800"
-                          role="menuitem"
+                          className="flex items-center w-full px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
                         >
-                          <ArrowUpIcon className="mr-3 h-5 w-5 transform rotate-90" /> {/* Using ArrowUp as a placeholder for LogoutIcon */}
-                          Cerrar Sesión
+                          <LogOut className="h-4 w-4 mr-3" />
+                          {t('auth.logout')}
                         </button>
                       </div>
                     </div>
-                  )}
-                </div>
-              </>
-            )}
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </header>
+      </header>
+
+      {/* Modal de Automatización */}
+      <AutomationModal 
+        isOpen={showAutomationModal}
+        onClose={() => setShowAutomationModal(false)}
+      />
+    </>
   );
 };
 

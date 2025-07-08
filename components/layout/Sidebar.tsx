@@ -1,149 +1,357 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { 
+  Home,
+  Shield,
+  AlertTriangle,
+  Users,
+  FileText,
+  Bell,
+  Search,
+  GraduationCap,
+  Award,
+  BarChart3,
+  Settings,
+  ChevronRight,
+  Leaf,
+  ClipboardCheck,
+  Eye,
+  TreePine,
+  Recycle,
+  HardHat
+} from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
-import { SIDEBAR_NAV_ITEMS } from '../../constants';
-import { UserRole, NavigationItem } from '../../types';
 import useUIStore from '../../store/uiStore';
-import { ChevronDownIcon, ChevronRightIcon, XMarkIcon } from '../icons/Icons';
-import Button from '../ui/Button';
+import { UserRole } from '../../types';
 
-const SidebarNavItem: React.FC<{ item: NavigationItem; closeSidebar: () => void; currentRole: UserRole | undefined }> = ({ item, closeSidebar, currentRole }) => {
-  const location = useLocation();
-  
-  // 1. Verificación de visibilidad basada en el rol
-  if (!currentRole || !item.allowedRoles.includes(currentRole)) {
-    return null;
+// Estructura del menú con submódulos
+const navigationStructure = [
+  {
+    id: 'dashboard',
+    title: 'Panel Principal',
+    path: '/dashboard',
+    icon: Home,
+    roles: [UserRole.ADMIN, UserRole.GERENCIA, UserRole.RRHH, UserRole.PREVENCION, UserRole.COMITE, UserRole.OPERACIONES]
+  },
+  {
+    id: 'environmental',
+    title: 'Gestión Ambiental',
+    icon: Leaf,
+    roles: [UserRole.ADMIN, UserRole.GERENCIA, UserRole.PREVENCION],
+    children: [
+      {
+        id: 'environmental-aspects',
+        title: 'Aspectos Ambientales', 
+        path: '/environmental/aspects',
+        icon: TreePine,
+        roles: [UserRole.ADMIN, UserRole.GERENCIA, UserRole.PREVENCION]
+      },
+      {
+        id: 'waste-management',
+        title: 'Gestión de Residuos',
+        path: '/environmental/waste',
+        icon: Recycle,
+        roles: [UserRole.ADMIN, UserRole.GERENCIA, UserRole.PREVENCION]
+      },
+      {
+        id: 'environmental-monitoring',
+        title: 'Monitoreo Ambiental',
+        path: '/environmental/monitoring',
+        icon: Eye,
+        roles: [UserRole.ADMIN, UserRole.GERENCIA, UserRole.PREVENCION]
+      },
+      {
+        id: 'legal-compliance',
+        title: 'Compliance Legal',
+        path: '/environmental/compliance',
+        icon: ClipboardCheck,
+        roles: [UserRole.ADMIN, UserRole.GERENCIA, UserRole.PREVENCION]
+      },
+      {
+        id: 'environmental-impact',
+        title: 'Impacto Ambiental',
+        path: '/environmental/impact',
+        icon: AlertTriangle,
+        roles: [UserRole.ADMIN, UserRole.GERENCIA, UserRole.PREVENCION]
+      }
+    ]
+  },
+  {
+    id: 'iso-quality',
+    title: 'Gestión de Calidad',
+    icon: Award,
+    roles: [UserRole.ADMIN, UserRole.GERENCIA, UserRole.PREVENCION],
+    children: [
+      {
+        id: 'non-conformities',
+        title: 'No Conformidades',
+        path: '/quality/non-conformities',
+        icon: AlertTriangle,
+        roles: [UserRole.ADMIN, UserRole.GERENCIA, UserRole.PREVENCION],
+        badge: '5' // Ejemplo de badge
+      },
+      {
+        id: 'corrective-actions',
+        title: 'Acciones Correctivas',
+        path: '/quality/corrective-actions',
+        icon: ClipboardCheck,
+        roles: [UserRole.ADMIN, UserRole.GERENCIA, UserRole.PREVENCION]
+      },
+      {
+        id: 'customer-satisfaction',
+        title: 'Satisfacción del Cliente',
+        path: '/quality/satisfaction',
+        icon: Users,
+        roles: [UserRole.ADMIN, UserRole.GERENCIA, UserRole.PREVENCION]
+      },
+      {
+        id: 'internal-audits',
+        title: 'Auditorías Internas',
+        path: '/quality/audits',
+        icon: Search,
+        roles: [UserRole.ADMIN, UserRole.GERENCIA, UserRole.PREVENCION]
+      },
+      {
+        id: 'continuous-improvement',
+        title: 'Mejora Continua',
+        path: '/quality/improvement',
+        icon: BarChart3,
+        roles: [UserRole.ADMIN, UserRole.GERENCIA, UserRole.PREVENCION]
+      }
+    ]
+  },
+  {
+    id: 'risk-management',
+    title: 'Gestión de Riesgos',
+    path: '/risk-management',
+    icon: Shield,
+    roles: [UserRole.ADMIN, UserRole.GERENCIA, UserRole.PREVENCION, UserRole.OPERACIONES]
+  },
+  {
+    id: 'incidents',
+    title: 'Gestión de Incidentes',
+    path: '/incidents',
+    icon: AlertTriangle,
+    roles: [UserRole.ADMIN, UserRole.GERENCIA, UserRole.PREVENCION, UserRole.RRHH, UserRole.OPERACIONES]
+  },
+  {
+    id: 'committee',
+    title: 'Comité Paritario',
+    path: '/committee',
+    icon: HardHat,
+    roles: [UserRole.ADMIN, UserRole.GERENCIA, UserRole.PREVENCION, UserRole.COMITE, UserRole.RRHH],
+    // Mostrar que es subcredencial de Prevención
+    parentRole: UserRole.PREVENCION
+  },
+  {
+    id: 'documents',
+    title: 'Gestión Documental',
+    path: '/documents',
+    icon: FileText,
+    roles: [UserRole.ADMIN, UserRole.GERENCIA, UserRole.PREVENCION, UserRole.RRHH, UserRole.COMITE, UserRole.OPERACIONES]
+  },
+  {
+    id: 'alerts',
+    title: 'Alertas',
+    path: '/alerts',
+    icon: Bell,
+    roles: [UserRole.ADMIN, UserRole.GERENCIA, UserRole.PREVENCION]
+  },
+  {
+    id: 'audits',
+    title: 'Auditorías e Inspecciones',
+    path: '/audits',
+    icon: Search,
+    roles: [UserRole.ADMIN, UserRole.GERENCIA, UserRole.PREVENCION]
+  },
+  {
+    id: 'training',
+    title: 'Capacitaciones',
+    path: '/training',
+    icon: GraduationCap,
+    roles: [UserRole.ADMIN, UserRole.RRHH, UserRole.PREVENCION]
+  },
+  {
+    id: 'compliance',
+    title: 'Cumplimiento ISO',
+    path: '/compliance',
+    icon: Award,
+    roles: [UserRole.ADMIN, UserRole.GERENCIA, UserRole.PREVENCION]
+  },
+  {
+    id: 'reports',
+    title: 'Reportes y Analytics',
+    path: '/reports',
+    icon: BarChart3,
+    roles: [UserRole.ADMIN, UserRole.GERENCIA, UserRole.PREVENCION, UserRole.RRHH]
+  },
+  {
+    id: 'training-docs',
+    title: 'Capacitación y Documentación',
+    path: '/training-docs',
+    icon: FileText,
+    roles: [UserRole.ADMIN, UserRole.RRHH, UserRole.PREVENCION]
+  },
+  {
+    id: 'document-management',
+    title: 'Gestión Documental',
+    path: '/document-management',
+    icon: FileText,
+    roles: [UserRole.ADMIN, UserRole.GERENCIA, UserRole.PREVENCION, UserRole.RRHH, UserRole.COMITE, UserRole.OPERACIONES]
+  },
+  {
+    id: 'settings',
+    title: 'Configuración',
+    path: '/settings',
+    icon: Settings,
+    roles: [UserRole.ADMIN, UserRole.GERENCIA, UserRole.RRHH, UserRole.PREVENCION, UserRole.COMITE, UserRole.OPERACIONES]
   }
-
-  const hasChildren = item.children && item.children.length > 0;
-
-  // 2. Lógica de isActive refinada
-  // Determina si el elemento de navegación actual (padre o hoja) debe considerarse activo.
-  let calculatedIsActive = false;
-  if (item.path) {
-    if (item.path === '/') {
-      // Para la ruta raíz ('/'), solo está activa si la ubicación actual es exactamente '/'.
-      calculatedIsActive = location.pathname === '/';
-    } else {
-      // Para cualquier otra ruta:
-      // - Está activa si la ubicación actual coincide exactamente con la ruta del elemento, O
-      // - Si el elemento tiene hijos Y la ubicación actual comienza con la ruta del elemento seguida de una barra.
-      //   Esto maneja casos en los que un elemento de menú padre debe aparecer activo cuando uno de sus hijos está activo.
-      calculatedIsActive = location.pathname === item.path || 
-                           (hasChildren && location.pathname.startsWith(item.path + '/'));
-    }
-  }
-  
-  // 3. Inicializar el estado `isOpen` para los elementos padre
-  // Si el elemento tiene hijos Y se calcula como activo, comienza abierto.
-  // Esto asegura que los menús padre que contienen la ruta activa estén expandidos por defecto.
-  const [isOpen, setIsOpen] = useState(hasChildren && calculatedIsActive);
-
-  // 4. Manejar clics en los elementos de navegación
-  const handleItemClick = () => {
-    if (hasChildren) {
-      // Si es un elemento padre, alterna su estado abierto/cerrado.
-      setIsOpen(!isOpen);
-    } else {
-      // Si es un elemento hoja (sin hijos), cierra la barra lateral (útil para móviles).
-      closeSidebar();
-    }
-  };
-
-  // 5. Estilos de íconos dinámicos basados en el estado activo
-  const iconClasses = (active: boolean) => 
-    `mr-3 h-5 w-5 flex-shrink-0 ${active ? 'text-pns-orange dark:text-pns-orange-light' : 'text-pns-gray-400 dark:text-pns-gray-500 group-hover:text-pns-text-dark dark:group-hover:text-pns-text-light'}`;
-
-  return (
-    <li>
-      {hasChildren ? (
-         // Si el elemento tiene hijos, renderiza un botón para alternar su submenú.
-         <button
-          onClick={handleItemClick}
-          className={`group flex items-center w-full px-3 py-2.5 text-sm font-medium rounded-md
-            ${calculatedIsActive ? 'bg-pns-blue-light dark:bg-pns-blue-dark text-pns-blue-dark dark:text-pns-blue-light' : 'text-pns-text-dark dark:text-pns-text-light hover:bg-pns-gray-200 dark:hover:bg-pns-gray-700 hover:text-pns-text-dark dark:hover:text-pns-text-light'}
-            transition-colors duration-150 ease-in-out`}
-          aria-expanded={isOpen}
-        >
-          {/* Ícono y nombre para el botón padre */}
-          <item.icon className={iconClasses(calculatedIsActive)} />
-          <span className="flex-1 text-left">{item.name}</span>
-          {/* Ícono de chevron que indica el estado abierto/cerrado */}
-          {isOpen ? <ChevronDownIcon className="ml-auto h-4 w-4" /> : <ChevronRightIcon className="ml-auto h-4 w-4" />}
-        </button>
-      ) : (
-        // Si el elemento no tiene hijos, renderiza un NavLink.
-        <NavLink
-          to={item.path} // item.path siempre debe estar definido aquí según el tipo NavigationItem
-          onClick={handleItemClick}
-          // La prop `className` de NavLink puede aceptar una función con `isActive`
-          className={({ isActive: navIsActive }) =>
-            `group flex items-center px-3 py-2.5 text-sm font-medium rounded-md
-            ${navIsActive ? 'bg-pns-blue-light dark:bg-pns-blue-dark text-pns-blue-dark dark:text-pns-blue-light' : 'text-pns-text-dark dark:text-pns-text-light hover:bg-pns-gray-200 dark:hover:bg-pns-gray-700 hover:text-pns-text-dark dark:hover:text-pns-text-light'}
-            transition-colors duration-150 ease-in-out`
-          }
-        >
-         {/* Los hijos de NavLink también pueden ser una función con `isActive` para renderizar contenido */}
-         {({ isActive: navIsActive }) => ( 
-            <>
-              {/* Usa el isActive de NavLink para estilizar su contenido directo */}
-              <item.icon className={iconClasses(navIsActive)} />
-              <span className="flex-1">{item.name}</span>
-            </>
-          )}
-        </NavLink>
-      )}
-      {/* Renderiza los hijos si existen y el padre está abierto */}
-      {hasChildren && isOpen && (
-        <ul className="pl-5 mt-1 space-y-1">
-          {item.children?.map((child) => (
-            <SidebarNavItem 
-              key={child.path || child.name} 
-              item={child} 
-              closeSidebar={closeSidebar} 
-              currentRole={currentRole} 
-            />
-          ))}
-        </ul>
-      )}
-    </li>
-  );
-};
+];
 
 const Sidebar: React.FC = () => {
-  const { userRole } = useAuth();
-  const { sidebarOpen, setSidebarOpen } = useUIStore();
+  const location = useLocation();
+  const { user } = useAuth();
+  const { sidebarOpen } = useUIStore();
+  const { t } = useTranslation();
 
-  const closeSidebar = () => {
-    if (window.innerWidth < 768) { // Solo cerrar en móvil
-      setSidebarOpen(false);
-    }
+  // Filtrar elementos según el rol del usuario
+  const getVisibleItems = () => {
+    if (!user) return [];
+    
+    return navigationStructure.filter(item => {
+      // Si el item tiene parentRole, verificar si el usuario actual es ese parent o tiene el rol específico
+      if (item.parentRole) {
+        return user.role === item.parentRole || item.roles.includes(user.role);
+      }
+      return item.roles.includes(user.role);
+    });
   };
-  
-  if (!sidebarOpen && window.innerWidth < 768) { // Solo retornar null si la barra lateral está cerrada Y en móvil
-      return null;
-  }
+
+  const hasPermission = (roles: UserRole[]) => {
+    return user && roles.includes(user.role);
+  };
+
+  const isActiveItem = (path?: string, children?: any[]) => {
+    if (path) {
+      return location.pathname === path;
+    }
+    if (children) {
+      return children.some(child => location.pathname === child.path);
+    }
+    return false;
+  };
+
+  const visibleItems = getVisibleItems();
 
   return (
-    <aside className={`fixed inset-y-0 left-0 z-30 w-64 bg-pns-nav-bg-light dark:bg-pns-nav-bg-dark border-r border-pns-border-light dark:border-pns-border-dark transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 transition-transform duration-300 ease-in-out md:sticky md:top-16 md:h-[calc(100vh-4rem)] flex-col shadow-lg md:shadow-none ${sidebarOpen ? 'flex' : 'hidden md:flex'}`}>
-       <div className="flex items-center justify-end p-2 md:hidden">
-         <Button variant="ghost" size="icon" onClick={() => setSidebarOpen(false)} aria-label="Cerrar menú lateral">
-           <XMarkIcon className="h-6 w-6" />
-         </Button>
-       </div>
-      <nav className="flex-1 px-3 py-4 space-y-1.5 overflow-y-auto">
-        <ul className="space-y-1.5">
-          {SIDEBAR_NAV_ITEMS.map((item) => (
-            <SidebarNavItem key={item.path || item.name} item={item} closeSidebar={closeSidebar} currentRole={userRole} />
-          ))}
-        </ul>
-      </nav>
-      <div className="p-4 border-t border-pns-border-light dark:border-pns-border-dark">
-        <p className="text-xs text-center text-pns-gray-500 dark:text-pns-gray-400">
-          © {new Date().getFullYear()} Prevention & Safety
-        </p>
+    <div className={`${
+      sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+    } fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-pns-gray-800 shadow-lg transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0`}>
+      
+      {/* Header del Sidebar */}
+      <div className="flex items-center justify-center h-16 px-4 border-b border-pns-gray-200 dark:border-pns-gray-700">
+        <div className="text-center">
+          <h2 className="text-sm font-bold text-pns-orange uppercase tracking-wide">
+            Prevention & Safety
+          </h2>
+          <p className="text-xs text-pns-gray-500 dark:text-pns-gray-400">
+            {user?.role} Dashboard
+          </p>
+        </div>
       </div>
-    </aside>
+
+      {/* Navigation */}
+      <nav className="flex-1 overflow-y-auto px-4 py-4 space-y-1">
+        {visibleItems.map((item) => (
+          <div key={item.id}>
+            {item.children ? (
+              // Item con submenu
+              <div className="space-y-1">
+                <div className={`flex items-center px-3 py-2 text-sm font-medium rounded-lg ${
+                  isActiveItem(undefined, item.children)
+                    ? 'bg-pns-orange text-white'
+                    : 'text-pns-gray-700 dark:text-pns-gray-300 hover:bg-pns-gray-100 dark:hover:bg-pns-gray-700'
+                }`}>
+                  <item.icon className="mr-3 h-5 w-5 flex-shrink-0" />
+                  <span className="flex-1">{item.title}</span>
+                  <ChevronRight className="h-4 w-4" />
+                </div>
+                
+                {/* Submenu items */}
+                <div className="ml-4 space-y-1">
+                  {item.children
+                    .filter(child => hasPermission(child.roles))
+                    .map((child) => (
+                      <NavLink
+                        key={child.id}
+                        to={child.path}
+                        className={({ isActive }) =>
+                          `flex items-center px-3 py-2 text-sm rounded-lg transition-colors ${
+                            isActive
+                              ? 'bg-pns-orange text-white'
+                              : 'text-pns-gray-600 dark:text-pns-gray-400 hover:bg-pns-gray-100 dark:hover:bg-pns-gray-700 hover:text-pns-gray-900 dark:hover:text-white'
+                          }`
+                        }
+                      >
+                        <child.icon className="mr-3 h-4 w-4 flex-shrink-0" />
+                        <span className="flex-1">{child.title}</span>
+                        {child.badge && (
+                          <span className="ml-2 px-2 py-1 text-xs bg-red-500 text-white rounded-full">
+                            {child.badge}
+                          </span>
+                        )}
+                      </NavLink>
+                    ))}
+                </div>
+              </div>
+            ) : (
+              // Item simple
+              <NavLink
+                to={item.path || '#'}
+                className={({ isActive }) =>
+                  `flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+                    isActive
+                      ? 'bg-pns-orange text-white'
+                      : 'text-pns-gray-700 dark:text-pns-gray-300 hover:bg-pns-gray-100 dark:hover:bg-pns-gray-700'
+                  }`
+                }
+              >
+                <item.icon className="mr-3 h-5 w-5 flex-shrink-0" />
+                <span className="flex-1">{item.title}</span>
+                
+                {/* Indicador de subcredencial */}
+                {item.parentRole && user?.role === UserRole.COMITE && (
+                  <span className="text-xs bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 px-2 py-1 rounded">
+                    Sub
+                  </span>
+                )}
+              </NavLink>
+            )}
+          </div>
+        ))}
+      </nav>
+
+      {/* Footer del Sidebar */}
+      <div className="p-4 border-t border-pns-gray-200 dark:border-pns-gray-700">
+        <div className="text-center">
+          <div className="text-xs text-pns-gray-500 dark:text-pns-gray-400">
+            Conectado como
+          </div>
+          <div className="text-sm font-medium text-pns-gray-900 dark:text-white truncate">
+            {user?.name}
+          </div>
+          <div className="text-xs text-pns-orange">
+            {user?.role}
+            {user?.role === UserRole.COMITE && (
+              <span className="ml-1 text-pns-gray-500">
+                (Prevención)
+              </span>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 

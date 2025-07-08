@@ -135,7 +135,7 @@ export class AuthService {
     const mockUsers: Record<string, any> = {
       'admin@pns.com': { 
         id: '1', 
-        name: 'Administrador', 
+        name: 'Administrador General', 
         email: 'admin@pns.com', 
         role: 'Admin',
         isActive: true,
@@ -153,9 +153,37 @@ export class AuthService {
       },
       'rrhh@pns.com': { 
         id: '3', 
-        name: 'Jefe RRHH', 
+        name: 'Jefe de Recursos Humanos', 
         email: 'rrhh@pns.com', 
         role: 'RRHH',
+        isActive: true,
+        createdAt: new Date().toISOString(),
+        lastLogin: new Date().toISOString(),
+      },
+      'prevencion@pns.com': { 
+        id: '4', 
+        name: 'Especialista en Prevención de Riesgos', 
+        email: 'prevencion@pns.com', 
+        role: 'Prevencion',
+        isActive: true,
+        createdAt: new Date().toISOString(),
+        lastLogin: new Date().toISOString(),
+      },
+      'comite@pns.com': { 
+        id: '5', 
+        name: 'Representante Comité Paritario', 
+        email: 'comite@pns.com', 
+        role: 'Comite',
+        parentRole: 'Prevencion', // Indica que es subcredencial de Prevención
+        isActive: true,
+        createdAt: new Date().toISOString(),
+        lastLogin: new Date().toISOString(),
+      },
+      'operaciones@pns.com': { 
+        id: '6', 
+        name: 'Supervisor de Operaciones', 
+        email: 'operaciones@pns.com', 
+        role: 'Operaciones',
         isActive: true,
         createdAt: new Date().toISOString(),
         lastLogin: new Date().toISOString(),

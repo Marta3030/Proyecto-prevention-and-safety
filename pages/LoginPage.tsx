@@ -93,6 +93,9 @@ const LoginPage: React.FC = () => {
       'admin': { email: 'admin@pns.com', password: 'password123' },
       'gerencia': { email: 'gerencia@pns.com', password: 'password123' },
       'rrhh': { email: 'rrhh@pns.com', password: 'password123' },
+      'prevencion': { email: 'prevencion@pns.com', password: 'password123' },
+      'comite': { email: 'comite@pns.com', password: 'password123' },
+      'operaciones': { email: 'operaciones@pns.com', password: 'password123' },
     };
 
     const credentials = demoCredentials[role as keyof typeof demoCredentials];
@@ -221,27 +224,48 @@ const LoginPage: React.FC = () => {
             <p className="text-sm text-pns-gray-600 dark:text-pns-gray-400 text-center mb-4">
               Usuarios de demostración:
             </p>
-            <div className="grid grid-cols-1 gap-2">
+            <div className="grid grid-cols-2 gap-2">
               <button
                 onClick={() => handleDemoLogin('admin')}
                 disabled={isLoading || isSubmitting}
-                className="btn-secondary text-sm py-2"
+                className="btn-secondary text-xs py-2"
               >
                 👨‍💼 Administrador
               </button>
               <button
                 onClick={() => handleDemoLogin('gerencia')}
                 disabled={isLoading || isSubmitting}
-                className="btn-secondary text-sm py-2"
+                className="btn-secondary text-xs py-2"
               >
                 🏢 Gerencia
               </button>
               <button
                 onClick={() => handleDemoLogin('rrhh')}
                 disabled={isLoading || isSubmitting}
-                className="btn-secondary text-sm py-2"
+                className="btn-secondary text-xs py-2"
               >
-                👥 Recursos Humanos
+                👥 RRHH
+              </button>
+              <button
+                onClick={() => handleDemoLogin('prevencion')}
+                disabled={isLoading || isSubmitting}
+                className="btn-secondary text-xs py-2"
+              >
+                🛡️ Prevención
+              </button>
+              <button
+                onClick={() => handleDemoLogin('comite')}
+                disabled={isLoading || isSubmitting}
+                className="btn-secondary text-xs py-2"
+              >
+                👷‍♂️ Comité
+              </button>
+              <button
+                onClick={() => handleDemoLogin('operaciones')}
+                disabled={isLoading || isSubmitting}
+                className="btn-secondary text-xs py-2"
+              >
+                ⚙️ Operaciones
               </button>
             </div>
           </div>
